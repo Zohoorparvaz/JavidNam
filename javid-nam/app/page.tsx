@@ -20,7 +20,7 @@ export default async function Home() {
       <input
         type="text"
         placeholder="جستجو بر اساس نام یا شهر..."
-        className="w-full max-w-md mx-auto block p-4 rounded-xl border mb-8"
+        className="w-full max-w-md mx-auto block p-4 rounded-xl border border-gray-300 bg-white text-black placeholder:text-gray-500 mb-8 focus:outline-none focus:ring-2 focus:ring-red-700"
       />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
