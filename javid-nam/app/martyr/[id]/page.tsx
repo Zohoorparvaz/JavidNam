@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link';
-import AddResourceForm from '../AddResourceForm';
+import AddResourceForm from './AddResourceForm';
+import PhotoUpload from './PhotoUpload';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,6 +15,7 @@ type Martyr = {
   location: string | null;
   date_killed: string | null;
   additional_comments: string | null;
+  photo_url: string | null;
 };
 
 type ResourceType = 'photo' | 'video' | 'article' | 'social' | 'document' | 'other';
@@ -59,7 +61,7 @@ export default async function MartyrPage({
 
   if (!martyr) {
     return (
-      <div className="p-6 text-center text-gray-500" dir="rtl">
+      <div className="min-h-screen bg-black p-6 text-center text-gray-500" dir="rtl">
         یافت نشد
       </div>
     );
@@ -74,48 +76,56 @@ export default async function MartyrPage({
     .join(' • ');
 
   return (
-    <div className="max-w-4xl mx-auto p-6" dir="rtl">
-      <Link href="/" className="text-red-700 hover:underline text-sm mb-6 inline-block">
-        ← بازگشت به فهرست
-      </Link>
+    <div className="min-h-screen bg-black" dir="rtl">
+      <div className="max-w-4xl mx-auto p-6">
+        <Link href="/" className="text-red-500 hover:underline text-sm mb-6 inline-block">
+          ← بازگشت به فهرست
+        </Link>
 
-      <h1 className="text-4xl font-bold mb-2">{martyr.full_name}</h1>
-      {meta && <p className="text-gray-500 mb-4">{meta}</p>}
-      {martyr.additional_comments && (
-        <p className="text-lg text-gray-700 mb-10">{martyr.additional_comments}</p>
-      )}
-
-      <h2 className="text-2xl font-semibold mb-4">منابع و مستندات</h2>
-
-      {resources && resources.length > 0 ? (
-        <div className="space-y-3 mb-10">
-          {resources.map(r => (
-            <a
-              key={r.id}
-              href={r.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-start gap-3 bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition border"
-            >
-              <span className="text-sm bg-red-50 text-red-700 px-2 py-1 rounded-lg shrink-0">
-                {typeLabel[r.type] ?? typeLabel.other}
-              </span>
-              <div className="min-w-0">
-                <p className="font-medium truncate">{r.title ?? r.url}</p>
-                {r.description && (
-                  <p className="text-sm text-gray-500 mt-0.5">{r.description}</p>
-                )}
-                <p className="text-xs text-gray-300 mt-1 truncate">{r.url}</p>
-              </div>
-            </a>
-          ))}
+        {/* Header */}
+        <div className="flex gap-6 items-start mb-10">
+          <PhotoUpload martyrId={String(martyr.id)} currentPhotoUrl={martyr.photo_url} />
+          <div className="flex-1">
+            <h1 className="text-4xl font-bold text-white mb-2">{martyr.full_name}</h1>
+            {meta && <p className="text-gray-400 mb-4">{meta}</p>}
+            {martyr.additional_comments && (
+              <p className="text-gray-300 text-lg">{martyr.additional_comments}</p>
+            )}
+          </div>
         </div>
-      ) : (
-        <p className="text-gray-400 mb-10">هنوز منبعی اضافه نشده است.</p>
-      )
-      }
 
-      <AddResourceForm martyrId={id} />
+        {/* Resources */}
+        <h2 className="text-2xl font-semibold text-white mb-4">منابع و مستندات</h2>
+
+        {resources && resources.length > 0 ? (
+          <div className="space-y-3 mb-10">
+            {resources.map(r => (
+              <a
+                key={r.id}
+                href={r.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-3 bg-gray-900 p-4 rounded-xl hover:bg-gray-800 transition border border-gray-800 hover:border-red-700"
+              >
+                <span className="text-sm bg-red-900 text-red-300 px-2 py-1 rounded-lg shrink-0">
+                  {typeLabel[r.type] ?? typeLabel.other}
+                </span>
+                <div className="min-w-0">
+                  <p className="font-medium text-white truncate">{r.title ?? r.url}</p>
+                  {r.description && (
+                    <p className="text-sm text-gray-400 mt-0.5">{r.description}</p>
+                  )}
+                  <p className="text-xs text-gray-600 mt-1 truncate">{r.url}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-600 mb-10">هنوز منبعی اضافه نشده است.</p>
+        )}
+
+        <AddResourceForm martyrId={String(martyr.id)} />
+      </div>
     </div >
   );
 }
