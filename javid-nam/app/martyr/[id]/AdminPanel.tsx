@@ -28,7 +28,7 @@ export default function AdminPanel({
   const [wrong, setWrong] = useState(false);
 
   const handleUnlock = () => {
-    if (password === process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
+    if (password === "This is only for the admin to change") {
       setUnlocked(true);
       setWrong(false);
     } else {
