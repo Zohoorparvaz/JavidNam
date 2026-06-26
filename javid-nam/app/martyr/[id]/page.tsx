@@ -101,7 +101,7 @@ export default async function MartyrPage({
         <div className="flex gap-6 items-start mb-10">
           <div className="w-40 h-40 rounded-2xl overflow-hidden border border-gray-700 shrink-0">
             {martyr.photo_url ? (
-              <Image
+              <img
                 src={martyr.photo_url}
                 alt={martyr.full_name}
                 width={160}
