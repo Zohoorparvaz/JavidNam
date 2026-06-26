@@ -2,7 +2,6 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { useState, useRef } from 'react';
-import Image from 'next/image';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -80,7 +79,7 @@ export default function PhotoUpload({ martyrId, currentPhotoUrl }: {
         className="relative w-40 h-40 rounded-2xl overflow-hidden border border-gray-700 cursor-pointer group"
       >
         {preview ? (
-          <Image
+          <img
             src={preview}
             alt="تصویر شهید"
             fill
