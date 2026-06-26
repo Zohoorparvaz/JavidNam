@@ -52,9 +52,15 @@ export default function AddResourceForm({ martyrId }: { martyrId: string }) {
     }
   };
 
+  const inputClass =
+    'w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition';
+
   return (
-    <div className="bg-white rounded-2xl shadow p-6 border" dir="rtl">
-      <h3 className="text-xl font-semibold mb-4">افزودن منبع جدید</h3>
+    <div className="bg-gray-900 rounded-2xl border border-gray-800 p-6" dir="rtl">
+      <h3 className="text-xl font-semibold text-white mb-1">افزودن منبع جدید</h3>
+      <p className="text-gray-500 text-sm mb-5">
+        لینک عکس، ویدیو، مقاله یا هر مدرکی را اضافه کنید
+      </p>
 
       <div className="space-y-3">
         <input
@@ -62,7 +68,7 @@ export default function AddResourceForm({ martyrId }: { martyrId: string }) {
           placeholder="آدرس لینک (الزامی)"
           value={url}
           onChange={e => setUrl(e.target.value)}
-          className="w-full border rounded-xl p-3"
+          className={inputClass}
           dir="ltr"
         />
         <input
@@ -70,22 +76,22 @@ export default function AddResourceForm({ martyrId }: { martyrId: string }) {
           placeholder="عنوان (اختیاری)"
           value={title}
           onChange={e => setTitle(e.target.value)}
-          className="w-full border rounded-xl p-3 text-right"
+          className={inputClass}
         />
         <textarea
           placeholder="توضیحات (اختیاری)"
           value={description}
           onChange={e => setDescription(e.target.value)}
           rows={2}
-          className="w-full border rounded-xl p-3 text-right resize-none"
+          className={`${inputClass} resize-none`}
         />
         <select
           value={type}
           onChange={e => setType(e.target.value as ResourceType)}
-          className="w-full border rounded-xl p-3 text-right bg-white"
+          className={`${inputClass} cursor-pointer`}
         >
           {(Object.keys(typeLabel) as ResourceType[]).map(t => (
-            <option key={t} value={t}>
+            <option key={t} value={t} className="bg-gray-900 text-white">
               {typeLabel[t]}
             </option>
           ))}
@@ -94,16 +100,20 @@ export default function AddResourceForm({ martyrId }: { martyrId: string }) {
         <button
           onClick={handleSubmit}
           disabled={status === 'loading' || !url.trim()}
-          className="w-full bg-red-700 text-white py-3 rounded-xl font-semibold hover:bg-red-800 disabled:opacity-50 transition"
+          className="w-full bg-red-700 text-white py-3 rounded-xl font-semibold hover:bg-red-600 disabled:opacity-40 disabled:cursor-not-allowed transition"
         >
-          {status === 'loading' ? 'در حال ارسال...' : 'افزودن منبع'}
+          {status === 'loading' ? 'در حال ارسال...' : 'افزودن منبع ←'}
         </button>
 
         {status === 'success' && (
-          <p className="text-green-600 text-center">✓ منبع با موفقیت اضافه شد</p>
+          <p className="text-green-400 text-center text-sm">
+            ✓ منبع با موفقیت اضافه شد
+          </p>
         )}
         {status === 'error' && (
-          <p className="text-red-600 text-center">خطا در ارسال. دوباره تلاش کنید.</p>
+          <p className="text-red-400 text-center text-sm">
+            خطا در ارسال. دوباره تلاش کنید.
+          </p>
         )}
       </div>
     </div>
