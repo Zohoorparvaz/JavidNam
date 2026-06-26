@@ -1,7 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link';
+import Image from 'next/image';
 import AddResourceForm from './AddResourceForm';
-import PhotoUpload from './PhotoUpload';
+import CommentForm from './CommentForm';
+import AdminPanel from './AdminPanel';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -27,6 +29,12 @@ type Resource = {
   title: string | null;
   description: string | null;
   type: ResourceType;
+  submitted_at: string;
+};
+
+type Comment = {
+  id: string;
+  content: string;
   submitted_at: string;
 };
 
@@ -59,6 +67,13 @@ export default async function MartyrPage({
     .order('submitted_at', { ascending: false })
     .returns<Resource[]>();
 
+  const { data: comments } = await supabase
+    .from('comments')
+    .select('id, content, submitted_at')
+    .eq('martyr_id', id)
+    .order('submitted_at', { ascending: false })
+    .returns<Comment[]>();
+
   if (!martyr) {
     return (
       <div className="min-h-screen bg-black p-6 text-center text-gray-500" dir="rtl">
@@ -82,9 +97,23 @@ export default async function MartyrPage({
           ← بازگشت به فهرست
         </Link>
 
-        {/* Header */}
+        {/* Public header */}
         <div className="flex gap-6 items-start mb-10">
-          <PhotoUpload martyrId={String(martyr.id)} currentPhotoUrl={martyr.photo_url} />
+          <div className="w-40 h-40 rounded-2xl overflow-hidden border border-gray-700 shrink-0">
+            {martyr.photo_url ? (
+              <Image
+                src={martyr.photo_url}
+                alt={martyr.full_name}
+                width={160}
+                height={160}
+                className="object-cover w-full h-full"
+              />
+            ) : (
+              <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+                <span className="text-gray-600 text-sm">بدون تصویر</span>
+              </div>
+            )}
+          </div>
           <div className="flex-1">
             <h1 className="text-4xl font-bold text-white mb-2">{martyr.full_name}</h1>
             {meta && <p className="text-gray-400 mb-4">{meta}</p>}
@@ -96,7 +125,6 @@ export default async function MartyrPage({
 
         {/* Resources */}
         <h2 className="text-2xl font-semibold text-white mb-4">منابع و مستندات</h2>
-
         {resources && resources.length > 0 ? (
           <div className="space-y-3 mb-10">
             {resources.map(r => (
@@ -124,7 +152,26 @@ export default async function MartyrPage({
           <p className="text-gray-600 mb-10">هنوز منبعی اضافه نشده است.</p>
         )}
 
-        <AddResourceForm martyrId={String(martyr.id)} />
+        {/* Add resource — public */}
+        <div className="mb-12">
+          <AddResourceForm martyrId={id} />
+        </div>
+
+        {/* Comments — public */}
+        <div className="mb-12">
+          <CommentForm martyrId={id} initialComments={comments ?? []} />
+        </div>
+
+        {/* Admin panel — password protected */}
+        <AdminPanel
+          martyrId={id}
+          photoUrl={martyr.photo_url}
+          fullName={martyr.full_name}
+          age={martyr.age ? String(martyr.age) : null}
+          location={martyr.location}
+          dateKilled={martyr.date_killed}
+          additionalComments={martyr.additional_comments}
+        />
       </div>
     </div >
   );
