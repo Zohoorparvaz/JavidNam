@@ -29,25 +29,28 @@ export default function Home() {
       setLoading(true);
       setError(null);
 
-      try {
-        let q = supabase.from('martyrs').select('*').order('full_name');
-        if (query.trim()) {
-          q = q.or(`full_name.ilike.%${query}%,location.ilike.%${query}%`);
-        }
-        const { data, error: sbError } = await q.limit(100);
-        if (sbError) throw sbError;
+      const { data, error: sbError } = await supabase
+        .from('martyrs')
+        .select('id, full_name, date_killed, age, location, additional_comments')
+        .ilike('full_name', `%${query}%`)
+        .order('full_name')
+        .limit(100);
+
+      console.log('data:', data);
+      console.log('error:', sbError);
+
+      if (sbError) {
+        setError('خطا: ' + sbError.message);
+      } else {
         setMartyrs(data ?? []);
-      } catch (e) {
-        console.error(e);
-        setError('خطا در بارگذاری اطلاعات');
-      } finally {
-        setLoading(false);
       }
+      setLoading(false);
     };
 
-    const timer = setTimeout(fetchMartyrs, 300);
-    return () => clearTimeout(timer);
+    fetchMartyrs();
   }, [query]);
+
+
 
   return (
     <div className="min-h-screen bg-gray-50 p-6" dir="rtl">
