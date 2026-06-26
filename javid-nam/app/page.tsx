@@ -32,7 +32,7 @@ export default function Home() {
       const { data, error: sbError } = await supabase
         .from('martyrs')
         .select('id, full_name, date_killed, age, location, additional_comments')
-        .ilike('full_name', `%${query}%`)
+        .like('full_name', `%${query}%`)
         .order('full_name')
         .limit(100);
 
